@@ -13,36 +13,50 @@
  *   data       → data do evento (ex: "15 de outubro de 2026")
  *   categoria  → 'festa' | 'casamento' | 'ensaio' | 'formatura' | 'corporativo' | 'outro'
  *   descricao  → texto breve descrevendo o evento (opcional)
- *   capa       → caminho relativo de uma imagem de capa, ou null para usar gradiente
- *   link       → URL completa da pasta no Google Drive
+ *   capa       → caminho relativo de uma imagem de capa, ou null para gradiente SVG gerado
+ *   link       → URL completa da pasta no Google Drive (ou outro serviço)
  *   status     → 'disponivel' | 'em_edicao' | 'expirado'
+ *   tipo       → 'drive' | 'telegram' (define ícone e comportamento do botão)
  * ─────────────────────────────────────────────────────────────────────────── */
 const GALERIAS = [
   {
     id: 'galeria-01',
-    titulo: 'Galeria 01',
-    data: 'Em breve',
+    titulo: 'Lipe.Vision | Fotografia completa',
+    data: '',
     categoria: 'evento',
-    descricao: 'Registro fotográfico produzido pela LIPE.VISION.',
+    descricao: 'Suas melhores lembranças, reunidas em um só lugar.',
     capa: null,
     link: 'https://drive.google.com/drive/folders/1aJgV4nBBGd6rC6-mVU258do7MlwJUijn',
     status: 'disponivel',
+    tipo: 'drive',
   },
   {
     id: 'galeria-02',
-    titulo: 'Galeria 02',
-    data: 'Em breve',
+    titulo: 'Registros do seu evento',
+    data: '',
     categoria: 'evento',
-    descricao: 'Registro fotográfico produzido pela LIPE.VISION.',
+    descricao: 'Cada momento merece ser lembrado.',
     capa: null,
     link: 'https://drive.google.com/drive/folders/1HsUPmEMhGFsM7gbNkiW-KlIVMYZl-U4G',
     status: 'disponivel',
+    tipo: 'drive',
+  },
+  {
+    id: 'galeria-03',
+    titulo: 'Fotos e vídeos da boate',
+    data: '',
+    categoria: 'festa',
+    descricao: 'Seus melhores momentos, em alta qualidade.',
+    capa: null,
+    link: 'https://t.me/+LTBzXce6LTI5Njcx',
+    status: 'disponivel',
+    tipo: 'telegram',
   },
 ];
 
 /* ─── RENDER DAS GALERIAS ────────────────────────────────────────────────── */
 const CATEGORIA_LABEL = {
-  festa: 'Festa', casamento: 'Casamento', ensaio: 'Ensaio',
+  festa: 'Festas & Boates', casamento: 'Casamento', ensaio: 'Ensaio',
   formatura: 'Formatura', corporativo: 'Corporativo', evento: 'Evento', outro: 'Outros',
 };
 
@@ -52,18 +66,157 @@ const STATUS_LABEL = {
   expirado:   'Expirado',
 };
 
+/* ─ SVGs de capa gerados inline por galeria ─ */
+function capaSVG(id) {
+  if (id === 'galeria-01') {
+    // Capa clara premium — câmera abstrata + tipografia
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F9F9F9"/>
+      <stop offset="100%" style="stop-color:#F0EDE8"/>
+    </linearGradient>
+    <linearGradient id="gold1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#C9A55A"/>
+      <stop offset="100%" style="stop-color:#E8C87A"/>
+    </linearGradient>
+    <filter id="shadow1" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#00000014"/>
+    </filter>
+  </defs>
+  <rect width="600" height="338" fill="url(#bg1)"/>
+  <!-- Linha sutil decorativa -->
+  <rect x="0" y="0" width="600" height="2" fill="url(#gold1)" opacity="0.7"/>
+  <!-- Corpo da câmera -->
+  <rect x="195" y="108" width="210" height="148" rx="18" ry="18" fill="none" stroke="#D0C8B8" stroke-width="1.5" filter="url(#shadow1)"/>
+  <rect x="195" y="108" width="210" height="148" rx="18" ry="18" fill="white" opacity="0.85"/>
+  <!-- Visor -->
+  <rect x="236" y="94" width="80" height="22" rx="8" ry="8" fill="white" stroke="#D0C8B8" stroke-width="1.5"/>
+  <!-- Círculo da lente -->
+  <circle cx="300" cy="182" r="46" fill="none" stroke="#D0C8B8" stroke-width="1.5"/>
+  <circle cx="300" cy="182" r="34" fill="none" stroke="#E8E0D0" stroke-width="1"/>
+  <circle cx="300" cy="182" r="18" fill="url(#gold1)" opacity="0.15"/>
+  <circle cx="300" cy="182" r="3" fill="#C9A55A" opacity="0.5"/>
+  <!-- Botão obturador -->
+  <circle cx="370" cy="120" r="10" fill="white" stroke="#D0C8B8" stroke-width="1.5"/>
+  <!-- Logo -->
+  <text x="300" y="285" font-family="Georgia, serif" font-size="15" font-weight="400" fill="#1A1A1A" letter-spacing="4" text-anchor="middle" opacity="0.85">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
+  <text x="300" y="305" font-family="'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="300" fill="#999" letter-spacing="2.5" text-anchor="middle">Fotografia completa</text>
+  <!-- Linha decorativa dourada -->
+  <line x1="265" y1="316" x2="335" y2="316" stroke="#C9A55A" stroke-width="0.8" opacity="0.5"/>
+</svg>`)}`;
+  }
+
+  if (id === 'galeria-02') {
+    // Capa editorial — moldura fotográfica abstrata
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5F3F0"/>
+      <stop offset="100%" style="stop-color:#EBE7E0"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#C9A55A"/>
+      <stop offset="100%" style="stop-color:#E8C87A"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="338" fill="url(#bg2)"/>
+  <rect x="0" y="0" width="600" height="2" fill="url(#gold2)" opacity="0.7"/>
+  <!-- Moldura externa -->
+  <rect x="48" y="40" width="504" height="220" rx="4" ry="4" fill="none" stroke="#D6CFC4" stroke-width="1"/>
+  <!-- Moldura interna -->
+  <rect x="64" y="56" width="472" height="188" rx="2" ry="2" fill="none" stroke="#E4DFD8" stroke-width="0.75"/>
+  <!-- Quadrante abstrato — composição fotográfica -->
+  <rect x="80" y="72" width="140" height="105" rx="2" fill="white" opacity="0.6"/>
+  <rect x="232" y="72" width="105" height="105" rx="2" fill="white" opacity="0.45"/>
+  <rect x="350" y="72" width="170" height="105" rx="2" fill="white" opacity="0.6"/>
+  <rect x="80" y="189" width="210" height="43" rx="2" fill="white" opacity="0.4"/>
+  <rect x="302" y="189" width="218" height="43" rx="2" fill="white" opacity="0.4"/>
+  <!-- Detalhe dourado diagonal -->
+  <line x1="48" y1="40" x2="68" y2="60" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
+  <line x1="552" y1="40" x2="532" y2="60" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
+  <line x1="48" y1="260" x2="68" y2="240" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
+  <line x1="552" y1="260" x2="532" y2="240" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
+  <!-- Texto -->
+  <text x="300" y="291" font-family="Georgia, serif" font-size="14.5" font-weight="400" fill="#1A1A1A" letter-spacing="3.5" text-anchor="middle" opacity="0.85">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
+  <text x="300" y="311" font-family="'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="300" fill="#999" letter-spacing="2.5" text-anchor="middle">Registros do seu evento</text>
+  <line x1="265" y1="322" x2="335" y2="322" stroke="#C9A55A" stroke-width="0.8" opacity="0.5"/>
+</svg>`)}`;
+  }
+
+  // galeria-03 — capa escura com gradiente Telegram/neon
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0E0E1A"/>
+      <stop offset="60%" style="stop-color:#111128"/>
+      <stop offset="100%" style="stop-color:#0A0A18"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="30%" cy="35%" r="45%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:0.18"/>
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="72%" cy="65%" r="42%">
+      <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:0.16"/>
+      <stop offset="100%" style="stop-color:#2AABEE;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow3" cx="55%" cy="20%" r="30%">
+      <stop offset="0%" style="stop-color:#EC4899;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:0"/>
+    </radialGradient>
+    <linearGradient id="goldLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#C9A55A"/>
+      <stop offset="100%" style="stop-color:#E8C87A"/>
+    </linearGradient>
+    <filter id="blur3">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="600" height="338" fill="url(#bg3)"/>
+  <!-- Halos de luz -->
+  <ellipse cx="180" cy="120" rx="180" ry="120" fill="url(#glow1)" filter="url(#blur3)"/>
+  <ellipse cx="430" cy="220" rx="160" ry="110" fill="url(#glow2)" filter="url(#blur3)"/>
+  <ellipse cx="330" cy="68" rx="120" ry="80" fill="url(#glow3)" filter="url(#blur3)"/>
+  <!-- Anel decorativo câmera/vídeo -->
+  <circle cx="300" cy="155" r="68" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <circle cx="300" cy="155" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.75"/>
+  <!-- Ícone play/vídeo abstrato -->
+  <polygon points="283,136 283,174 322,155" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Ícone Telegram abstrato (avião de papel) -->
+  <g opacity="0.3" transform="translate(342,118) rotate(-35)">
+    <polygon points="0,0 28,10 10,14" fill="rgba(42,171,238,0.6)"/>
+    <polygon points="10,14 14,28 20,16" fill="rgba(42,171,238,0.4)"/>
+  </g>
+  <!-- Linha topo dourada -->
+  <rect x="0" y="0" width="600" height="1.5" fill="url(#goldLine)" opacity="0.5"/>
+  <!-- Partículas de luz sutis -->
+  <circle cx="120" cy="60" r="1.5" fill="rgba(255,255,255,0.18)"/>
+  <circle cx="480" cy="45" r="1" fill="rgba(42,171,238,0.3)"/>
+  <circle cx="540" cy="160" r="1.5" fill="rgba(124,58,237,0.3)"/>
+  <circle cx="60" cy="260" r="1" fill="rgba(236,72,153,0.25)"/>
+  <circle cx="445" cy="290" r="1.5" fill="rgba(255,255,255,0.12)"/>
+  <!-- Texto -->
+  <text x="300" y="256" font-family="Georgia, serif" font-size="14" font-weight="400" fill="#F0EDE8" letter-spacing="3.5" text-anchor="middle" opacity="0.9">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
+  <text x="300" y="278" font-family="'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="300" fill="rgba(255,255,255,0.5)" letter-spacing="2.5" text-anchor="middle">Fotos e vídeos da boate</text>
+  <line x1="265" y1="290" x2="335" y2="290" stroke="#C9A55A" stroke-width="0.8" opacity="0.4"/>
+  <!-- Indicador Telegram sutil -->
+  <text x="300" y="316" font-family="'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="rgba(42,171,238,0.6)" letter-spacing="1.5" text-anchor="middle">via Telegram</text>
+</svg>`)}`;
+}
+
 function initGalerias() {
   const grid = $('#galeriasGrid');
   if (!grid) return;
 
   GALERIAS.forEach(g => {
     const card = document.createElement('article');
-    card.className = 'galeria__card';
+    card.className = `galeria__card${g.tipo === 'telegram' ? ' galeria__card--telegram' : ''}`;
     card.setAttribute('data-status', g.status);
 
+    // Capa: usa SVG gerado se capa externa não for fornecida
     const capaHTML = g.capa
       ? `<img src="${g.capa}" alt="Capa da ${g.titulo}" class="galeria__capa-img" loading="lazy" decoding="async" />`
-      : `<div class="galeria__capa-placeholder" aria-hidden="true"><i class="ri-image-2-line"></i></div>`;
+      : `<img src="${capaSVG(g.id)}" alt="Capa da ${g.titulo}" class="galeria__capa-img galeria__capa-svg" role="img" />`;
 
     const statusClass = g.status === 'disponivel' ? 'galeria__status--ok'
                       : g.status === 'em_edicao'   ? 'galeria__status--edit'
@@ -71,26 +224,34 @@ function initGalerias() {
 
     const btnDisabled = g.status === 'expirado';
 
+    // Botão e ícone variam conforme o tipo
+    const isTelegram = g.tipo === 'telegram';
+    const btnLabel   = isTelegram ? 'Acessar grupo no Telegram' : 'Acessar fotografias';
+    const btnIcon    = isTelegram ? 'ri-telegram-line' : 'ri-folder-open-line';
+    const btnClass   = isTelegram ? 'galeria__btn galeria__btn--telegram' : 'btn btn--primary galeria__btn';
+    const catLabel   = isTelegram ? 'Festas & Boates' : (CATEGORIA_LABEL[g.categoria] || g.categoria);
+
     card.innerHTML = `
-      <div class="galeria__capa">${capaHTML}</div>
+      <a href="${g.link}" class="galeria__capa-link" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${g.titulo}" tabindex="-1">
+        <div class="galeria__capa">${capaHTML}</div>
+      </a>
       <div class="galeria__body">
         <div class="galeria__meta">
-          <span class="galeria__cat">${CATEGORIA_LABEL[g.categoria] || g.categoria}</span>
+          <span class="galeria__cat">${catLabel}</span>
           <span class="galeria__status ${statusClass}">${STATUS_LABEL[g.status] || g.status}</span>
         </div>
         <h3 class="galeria__titulo">${g.titulo}</h3>
-        ${g.data ? `<p class="galeria__data"><i class="ri-calendar-line" aria-hidden="true"></i> ${g.data}</p>` : ''}
         ${g.descricao ? `<p class="galeria__desc">${g.descricao}</p>` : ''}
         <a
           href="${g.link}"
-          class="btn btn--primary galeria__btn${btnDisabled ? ' galeria__btn--disabled' : ''}"
+          class="${btnClass}${btnDisabled ? ' galeria__btn--disabled' : ''}"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Acessar fotografias da ${g.titulo} no Google Drive"
+          aria-label="${btnLabel}: ${g.titulo}"
           ${btnDisabled ? 'aria-disabled="true" tabindex="-1"' : ''}
         >
-          <span>Acessar fotografias</span>
-          <i class="ri-folder-open-line" aria-hidden="true"></i>
+          <span>${btnLabel}</span>
+          <i class="${btnIcon}" aria-hidden="true"></i>
         </a>
       </div>
     `;
