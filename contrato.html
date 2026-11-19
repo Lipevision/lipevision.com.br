@@ -677,6 +677,72 @@ ul{list-style:none}
         <span class="field__err" id="e-auth" style="display:block;margin-top:.4rem"></span>
       </div>
 
+      <!-- PIX - Agendamento de Pagamento -->
+      <div style="margin:2.5rem 0">
+        <h3 style="font-family:var(--font-d);font-size:1.3rem;font-weight:400;color:var(--pwh);margin-bottom:.75rem">PIX — Agendamento de Pagamento</h3>
+        <p style="font-size:.85rem;color:rgba(245,245,245,.45);margin-bottom:1.5rem;line-height:1.65">
+          Você pode copiar o código PIX abaixo para realizar ou agendar o pagamento no aplicativo do seu banco. O agendamento efetivo é realizado diretamente pelo seu banco.
+        </p>
+
+        <div style="background:rgba(201,165,90,.05);border:1px solid rgba(201,165,90,.18);border-left:3px solid var(--gold);padding:1.25rem 1.5rem;border-radius:0 4px 4px 0;margin-bottom:1.5rem">
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+            <i class="ri-qr-code-line" style="font-size:1.5rem;color:var(--gold)" aria-hidden="true"></i>
+            <div>
+              <strong style="display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);margin-bottom:.25rem">Chave PIX Copia e Cola</strong>
+              <p style="font-size:.8rem;color:rgba(245,245,245,.55)">Beneficiário: Sanderson Felipe</p>
+            </div>
+          </div>
+          <div style="background:var(--dark);border:1px solid rgba(255,255,255,.08);padding:.85rem 1rem;border-radius:3px;font-family:monospace;font-size:.75rem;color:rgba(245,245,245,.85);word-break:break-all;line-height:1.6;margin-bottom:.75rem" id="pixCode">00020101021126580014br.gov.bcb.pix01364a85b14f-5aaa-4edb-897d-22a3c9ad94a75204000053039865802BR5916Sanderson Felipe6009Sao Paulo62070503***63040ECC</div>
+          <button type="button" class="btn btn--gold" id="btnCopyPix" style="width:100%">
+            <i class="ri-file-copy-line" aria-hidden="true"></i>
+            <span>Copiar código PIX</span>
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="f-pix-valor">Valor do pagamento (R$)</label>
+            <input type="text" id="f-pix-valor" name="pixValor" placeholder="0.000,00" inputmode="numeric" />
+            <span class="field__err" id="e-pix-valor"></span>
+          </div>
+
+          <div class="field">
+            <label for="f-pix-data">Data desejada para pagamento</label>
+            <input type="date" id="f-pix-data" name="pixData" />
+            <span class="field__err" id="e-pix-data"></span>
+          </div>
+
+          <div class="field span2">
+            <label for="f-pix-desc">Descrição / Identificação do pagamento</label>
+            <input type="text" id="f-pix-desc" name="pixDesc" placeholder="Ex: Sinal 50% Casamento" />
+          </div>
+        </div>
+
+        <div class="notice" style="margin-top:1.25rem">
+          <strong>Importante sobre o agendamento</strong>
+          O agendamento efetivo do pagamento deve ser realizado no aplicativo do seu banco. Este formulário apenas registra sua intenção de pagamento para controle. Após copiar o código PIX, acesse o app do seu banco, selecione "PIX Copia e Cola" e programe a transferência para a data desejada.
+        </div>
+      </div>
+
+      <!-- Assinatura Eletrônica -->
+      <div style="margin:2.5rem 0">
+        <h3 style="font-family:var(--font-d);font-size:1.3rem;font-weight:400;color:var(--pwh);margin-bottom:.75rem">Assinatura Eletrônica</h3>
+        <p style="font-size:.85rem;color:rgba(245,245,245,.45);margin-bottom:1.25rem;line-height:1.65">
+          Para concluir a contratação, digite seu nome completo no campo abaixo. Seu nome será registrado como assinatura eletrônica no documento.
+        </p>
+
+        <div class="field">
+          <label for="f-assinatura">Digite seu nome completo para assinar o contrato <span class="req">*</span></label>
+          <input type="text" id="f-assinatura" name="assinatura" placeholder="Seu nome completo" required />
+          <span class="field__err" id="e-assinatura"></span>
+        </div>
+
+        <div class="notice" style="margin-top:1rem">
+          <strong>Sobre a assinatura eletrônica</strong>
+          A assinatura eletrônica registra sua concordância com os termos deste contrato. O sistema gravará: seu nome completo, data e horário do aceite, versão do contrato aceita e elementos técnicos de comprovação. Este registro não é descrito como assinatura digital certificada.
+        </div>
+      </div>
+
       <!-- Aceite obrigatório -->
       <div style="margin:2rem 0">
         <h3 style="font-family:var(--font-d);font-size:1.3rem;font-weight:400;color:var(--pwh);margin-bottom:1rem">Concordância com o Contrato</h3>
@@ -766,6 +832,23 @@ ul{list-style:none}
 /* ── Versão do contrato (atualizar ao mudar cláusulas) ── */
 const CONTRATO_VERSAO = 'v1.2';
 const WA_NUMERO      = '5571920029709';
+const CONTRATANTE_NOME = 'Sanderson Felipe da Silva Ferreira Matos';
+
+/* ── Copiar código PIX ── */
+document.getElementById('btnCopyPix')?.addEventListener('click', function() {
+  const pixCode = document.getElementById('pixCode').textContent.trim();
+  navigator.clipboard.writeText(pixCode)
+    .then(() => {
+      toast('Código PIX copiado com sucesso!', 'ok');
+      this.innerHTML = '<i class="ri-check-line"></i><span>Código Copiado!</span>';
+      setTimeout(() => {
+        this.innerHTML = '<i class="ri-file-copy-line"></i><span>Copiar código PIX</span>';
+      }, 3000);
+    })
+    .catch(() => {
+      toast('Não foi possível copiar. Selecione e copie manualmente.', 'err');
+    });
+});
 
 /* ── Ano no footer ── */
 document.getElementById('anoAtual').textContent = new Date().getFullYear();
@@ -845,6 +928,7 @@ function validar() {
   if (!g('f-local'))                         { markErr('f-local','e-local','Endereço obrigatório.'); ok=false; }
   if (!g('f-valor'))                         { markErr('f-valor','e-valor','Valor obrigatório.'); ok=false; }
   if (!g('f-pacote'))                        { markErr('f-pacote','e-pacote','Descrição do pacote obrigatória.'); ok=false; }
+  if (!g('f-assinatura'))                    { markErr('f-assinatura','e-assinatura','Digite seu nome completo para assinar o contrato.'); ok=false; }
   if (!document.querySelector('input[name="autorizacao"]:checked')) {
     setErr('e-auth', 'Selecione uma opção sobre autorização de imagem.'); ok=false;
   }
@@ -886,6 +970,11 @@ function coletar() {
     transp:      g('f-transp') ? `R$ ${g('f-transp')}` : '—',
     pacote:      g('f-pacote'),
     autorizacao: auth,
+    pixValor:    g('f-pix-valor') ? `R$ ${g('f-pix-valor')}` : '',
+    pixData:     g('f-pix-data') || '',
+    pixDesc:     g('f-pix-desc') || '',
+    assinatura:  g('f-assinatura'),
+    contratante: CONTRATANTE_NOME,
     aceiteTs:    agora.toLocaleString('pt-BR', { dateStyle:'full', timeStyle:'medium' }),
     aceite:      'Declaro que li, compreendi e concordo com os termos do contrato de prestação de serviços da LIPE.VISION.',
   };
@@ -1131,31 +1220,55 @@ function construirPDF(dados, informativo) {
     y+=10;
 
     /* ═══ ASSINATURAS ═══ */
-    novaLinha(60);
-    escrever('ESPAÇO PARA ASSINATURA', mL, {sz:7.5,cor:COR_GOLD,bold:true,lh:5});
+    novaLinha(75);
+    escrever('ASSINATURAS', mL, {sz:7.5,cor:COR_GOLD,bold:true,lh:5});
     linha(COR_GOLD,0.4); y+=10;
 
     const cW=(TW-10)/2;
     const c1=mL, c2=mL+cW+10;
 
+    // LIPE.VISION (Contratante/Prestador)
     doc.setDrawColor(...COR_LT); doc.setLineWidth(0.3);
-    doc.line(c1, y+18, c1+cW, y+18);
-    escrever('LIPE.VISION', c1, {sz:8.5,cor:COR_BLACK,bold:true});
-    escrever('Fotografia Profissional', c1, {sz:7.5,cor:COR_LT});
+    doc.line(c1, y+24, c1+cW, y+24);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...COR_BLACK);
+    doc.text(dados.contratante, c1, y+29);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...COR_LT);
+    doc.text('LIPE.VISION', c1, y+34);
+    doc.text('Fotografia Profissional', c1, y+38.5);
 
+    // Cliente (Contratado)
     const cury=y;
     y=cury;
-    doc.line(c2, y+18, c2+cW, y+18);
-    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...COR_BLACK);
-    const nm=dados.nome.length>28?dados.nome.slice(0,26)+'…':dados.nome;
-    doc.text(nm, c2, y+24);
+    doc.line(c2, y+24, c2+cW, y+24);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...COR_BLACK);
+    const assin=dados.assinatura.length>28?dados.assinatura.slice(0,26)+'…':dados.assinatura;
+    doc.text(assin, c2, y+29);
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...COR_LT);
-    doc.text(`CPF/CNPJ: ${dados.cpf}`, c2, y+30);
-    y+=40;
+    doc.text(`CPF/CNPJ: ${dados.cpf}`, c2, y+34);
+    doc.text('Contratante', c2, y+38.5);
+    y+=48;
 
+    // Data e local
     doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...COR_LT);
     doc.text(`Salvador, Bahia — ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}`, mL, y);
     y+=12;
+
+    // PIX - Se preenchido
+    if(dados.pixValor || dados.pixData){
+      novaLinha(30);
+      escrever('INFORMAÇÃO DE PAGAMENTO PIX', mL, {sz:7.5,cor:COR_GOLD,bold:true,lh:5});
+      linha(COR_GOLD,0.4); y+=5;
+      if(dados.pixValor) escrever(`Valor informado: ${dados.pixValor}`, mL, {sz:9,cor:COR_DARK,lh:5.8});
+      if(dados.pixData) {
+        const [yr,mo,da] = dados.pixData.split('-');
+        escrever(`Data desejada: ${da}/${mo}/${yr}`, mL, {sz:9,cor:COR_DARK,lh:5.8});
+      }
+      if(dados.pixDesc) escrever(`Descrição: ${dados.pixDesc}`, mL, {sz:9,cor:COR_DARK,lh:5.8});
+      y+=4;
+      doc.setFont('helvetica','italic'); doc.setFontSize(7.5); doc.setTextColor(...COR_LT);
+      sp('O agendamento efetivo do pagamento deve ser realizado no aplicativo do banco. Este registro é apenas informativo.', TW).forEach(l=>{ doc.text(l,mL,y); y+=4.5; });
+      y+=6;
+    }
 
     // Aviso final
     doc.setFillColor(252,249,240); doc.setDrawColor(...COR_GOLD); doc.setLineWidth(0.3);
@@ -1312,7 +1425,11 @@ document.getElementById('contratoForm').addEventListener('submit', async e => {
         `*Valor:* ${dados.valor}\n` +
         `*Transporte:* ${dados.transp}\n\n` +
         `*Pacote contratado:*\n${dados.pacote}\n\n` +
+        (dados.pixValor ? `*PIX - Valor:* ${dados.pixValor}\n` : '') +
+        (dados.pixData ? `*PIX - Data desejada:* ${dados.pixData.split('-').reverse().join('/')}\n` : '') +
+        (dados.pixDesc ? `*PIX - Descrição:* ${dados.pixDesc}\n\n` : '\n') +
         `*Autorização de imagem:* ${dados.autorizacao.split('—')[0].trim()}\n` +
+        `*Assinatura eletrônica:* ${dados.assinatura}\n` +
         `*Aceite em:* ${dados.aceiteTs}\n\n` +
         `O PDF do contrato foi gerado e está salvo no meu dispositivo. Aguardo confirmação. 📎`
       );

@@ -5,6 +5,102 @@
 
 'use strict';
 
+/* ─── CARROSSEL HERO ───────────────────────────────────────────────────────
+ * Carrossel fotográfico na tela inicial com as fotos selecionadas
+ * ─────────────────────────────────────────────────────────────────────────── */
+const HERO_CAROUSEL_IMAGES = [
+  'assets/images/photo_2026-11-18_15-44-09.jpg',
+  'assets/images/photo_2026-11-18_15-44-15.jpg',
+  'assets/images/photo_2026-11-18_15-44-17.jpg',
+  'assets/images/photo_2026-11-18_15-44-23.jpg',
+  'assets/images/photo_2026-11-18_15-44-25.jpg',
+  'assets/images/photo_2026-11-18_15-44-27.jpg',
+  'assets/images/photo_2026-11-18_15-44-29.jpg',
+  'assets/images/photo_2026-11-18_15-44-31.jpg',
+  'assets/images/photo_2026-11-18_15-44-33.jpg',
+  'assets/images/photo_2026-11-18_15-44-34.jpg',
+  'assets/images/photo_2026-11-18_15-44-36.jpg',
+  'assets/images/photo_2026-11-18_15-44-38.jpg',
+];
+
+function initHeroCarousel() {
+  const track = document.getElementById('heroCarouselTrack');
+  const indicators = document.getElementById('heroIndicators');
+  const btnPrev = document.getElementById('heroPrev');
+  const btnNext = document.getElementById('heroNext');
+  
+  if (!track) return;
+  
+  let currentIndex = 0;
+  let autoplayInterval;
+  
+  // Criar slides
+  HERO_CAROUSEL_IMAGES.forEach((src, index) => {
+    const slide = document.createElement('div');
+    slide.className = `hero__carousel-slide${index === 0 ? ' active' : ''}`;
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Fotografia LIPE.VISION ${index + 1}`;
+    img.loading = index === 0 ? 'eager' : 'lazy';
+    slide.appendChild(img);
+    track.appendChild(slide);
+    
+    // Criar indicador
+    const indicator = document.createElement('button');
+    indicator.className = `hero__carousel-indicator${index === 0 ? ' active' : ''}`;
+    indicator.setAttribute('aria-label', `Ir para foto ${index + 1}`);
+    indicator.addEventListener('click', () => goToSlide(index));
+    indicators.appendChild(indicator);
+  });
+  
+  const slides = track.querySelectorAll('.hero__carousel-slide');
+  const dots = indicators.querySelectorAll('.hero__carousel-indicator');
+  
+  function goToSlide(index) {
+    // Remove active de todos
+    slides[currentIndex].classList.remove('active');
+    dots[currentIndex].classList.remove('active');
+    
+    // Adiciona active no novo
+    currentIndex = index;
+    slides[currentIndex].classList.add('active');
+    dots[currentIndex].classList.add('active');
+    
+    // Reinicia autoplay
+    clearInterval(autoplayInterval);
+    startAutoplay();
+  }
+  
+  function nextSlide() {
+    goToSlide((currentIndex + 1) % HERO_CAROUSEL_IMAGES.length);
+  }
+  
+  function prevSlide() {
+    goToSlide((currentIndex - 1 + HERO_CAROUSEL_IMAGES.length) % HERO_CAROUSEL_IMAGES.length);
+  }
+  
+  function startAutoplay() {
+    autoplayInterval = setInterval(nextSlide, 5000); // 5 segundos por foto
+  }
+  
+  // Event listeners
+  if (btnNext) btnNext.addEventListener('click', nextSlide);
+  if (btnPrev) btnPrev.addEventListener('click', prevSlide);
+  
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  });
+  
+  // Pausa autoplay ao passar o mouse
+  track.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
+  track.addEventListener('mouseleave', startAutoplay);
+  
+  // Inicia autoplay
+  startAutoplay();
+}
+
 /* ─── DADOS DAS GALERIAS (SUAS FOTOS) ───────────────────────────────────────
  *
  * Para adicionar uma nova galeria, copie um bloco abaixo e ajuste:
@@ -69,82 +165,134 @@ const STATUS_LABEL = {
 /* ─ SVGs de capa gerados inline por galeria ─ */
 function capaSVG(id) {
   if (id === 'galeria-01') {
-    // Capa clara premium — câmera abstrata + tipografia
+    // Capa premium — câmera profissional com identidade LIPE.VISION
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
   <defs>
     <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#F9F9F9"/>
-      <stop offset="100%" style="stop-color:#F0EDE8"/>
+      <stop offset="0%" style="stop-color:#0A0A14"/>
+      <stop offset="50%" style="stop-color:#141420"/>
+      <stop offset="100%" style="stop-color:#0D0D18"/>
     </linearGradient>
     <linearGradient id="gold1" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#C9A55A"/>
-      <stop offset="100%" style="stop-color:#E8C87A"/>
+      <stop offset="50%" style="stop-color:#E8C87A"/>
+      <stop offset="100%" style="stop-color:#C9A55A"/>
     </linearGradient>
-    <filter id="shadow1" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#00000014"/>
+    <radialGradient id="glow1" cx="50%" cy="40%">
+      <stop offset="0%" style="stop-color:#C9A55A;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#C9A55A;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="shadow1">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
     </filter>
   </defs>
   <rect width="600" height="338" fill="url(#bg1)"/>
-  <!-- Linha sutil decorativa -->
-  <rect x="0" y="0" width="600" height="2" fill="url(#gold1)" opacity="0.7"/>
-  <!-- Corpo da câmera -->
-  <rect x="195" y="108" width="210" height="148" rx="18" ry="18" fill="none" stroke="#D0C8B8" stroke-width="1.5" filter="url(#shadow1)"/>
-  <rect x="195" y="108" width="210" height="148" rx="18" ry="18" fill="white" opacity="0.85"/>
-  <!-- Visor -->
-  <rect x="236" y="94" width="80" height="22" rx="8" ry="8" fill="white" stroke="#D0C8B8" stroke-width="1.5"/>
-  <!-- Círculo da lente -->
-  <circle cx="300" cy="182" r="46" fill="none" stroke="#D0C8B8" stroke-width="1.5"/>
-  <circle cx="300" cy="182" r="34" fill="none" stroke="#E8E0D0" stroke-width="1"/>
-  <circle cx="300" cy="182" r="18" fill="url(#gold1)" opacity="0.15"/>
-  <circle cx="300" cy="182" r="3" fill="#C9A55A" opacity="0.5"/>
-  <!-- Botão obturador -->
-  <circle cx="370" cy="120" r="10" fill="white" stroke="#D0C8B8" stroke-width="1.5"/>
-  <!-- Logo -->
-  <text x="300" y="285" font-family="Georgia, serif" font-size="15" font-weight="400" fill="#1A1A1A" letter-spacing="4" text-anchor="middle" opacity="0.85">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
-  <text x="300" y="305" font-family="'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="300" fill="#999" letter-spacing="2.5" text-anchor="middle">Fotografia completa</text>
-  <!-- Linha decorativa dourada -->
-  <line x1="265" y1="316" x2="335" y2="316" stroke="#C9A55A" stroke-width="0.8" opacity="0.5"/>
+  <ellipse cx="300" cy="135" rx="200" ry="120" fill="url(#glow1)"/>
+  <!-- Câmera profissional -->
+  <g filter="url(#shadow1)">
+    <!-- Corpo da câmera -->
+    <rect x="185" y="115" width="230" height="140" rx="8" fill="#1A1A28" stroke="#2A2A40" stroke-width="2"/>
+    <!-- Visor superior -->
+    <rect x="250" y="95" width="100" height="28" rx="6" fill="#0A0A14" stroke="#C9A55A" stroke-width="1.5"/>
+    <!-- Detalhe dourado no visor -->
+    <circle cx="300" cy="109" r="4" fill="#C9A55A"/>
+    <!-- Lente principal -->
+    <circle cx="300" cy="185" r="55" fill="#0D0D18" stroke="#3A3A50" stroke-width="3"/>
+    <circle cx="300" cy="185" r="48" fill="#1A1A28" stroke="#C9A55A" stroke-width="2"/>
+    <circle cx="300" cy="185" r="38" fill="url(#gold1)" opacity="0.2"/>
+    <circle cx="300" cy="185" r="28" fill="#0A0A14"/>
+    <circle cx="300" cy="185" r="8" fill="#C9A55A" opacity="0.6"/>
+    <!-- Flash/viewfinder -->
+    <rect x="365" y="130" width="24" height="16" rx="2" fill="#C9A55A" opacity="0.3"/>
+    <!-- Grip texture -->
+    <rect x="195" y="185" width="35" height="50" rx="3" fill="#0A0A14" opacity="0.4"/>
+    <line x1="200" y1="195" x2="200" y2="225" stroke="#C9A55A" stroke-width="0.5" opacity="0.3"/>
+    <line x1="205" y1="195" x2="205" y2="225" stroke="#C9A55A" stroke-width="0.5" opacity="0.3"/>
+    <line x1="210" y1="195" x2="210" y2="225" stroke="#C9A55A" stroke-width="0.5" opacity="0.3"/>
+    <line x1="215" y1="195" x2="215" y2="225" stroke="#C9A55A" stroke-width="0.5" opacity="0.3"/>
+    <line x1="220" y1="195" x2="220" y2="225" stroke="#C9A55A" stroke-width="0.5" opacity="0.3"/>
+    <!-- Botão obturador -->
+    <circle cx="380" cy="125" r="8" fill="#C9A55A"/>
+    <circle cx="380" cy="125" r="5" fill="#0A0A14"/>
+  </g>
+  <!-- Branding -->
+  <text x="300" y="285" font-family="Georgia, serif" font-size="28" font-weight="300" fill="#F5F5F5" text-anchor="middle" letter-spacing="4">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
+  <text x="300" y="308" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="300" fill="rgba(245,245,245,0.5)" text-anchor="middle" letter-spacing="3">FOTOGRAFIA COMPLETA</text>
+  <!-- Linha decorativa -->
+  <line x1="230" y1="318" x2="370" y2="318" stroke="#C9A55A" stroke-width="1" opacity="0.4"/>
 </svg>`)}`;
   }
 
   if (id === 'galeria-02') {
-    // Capa editorial — moldura fotográfica abstrata
+    // Capa eventos — câmera com elementos de evento
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
   <defs>
     <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#F5F3F0"/>
-      <stop offset="100%" style="stop-color:#EBE7E0"/>
+      <stop offset="0%" style="stop-color:#0D0D18"/>
+      <stop offset="50%" style="stop-color:#14141F"/>
+      <stop offset="100%" style="stop-color:#0A0A14"/>
     </linearGradient>
     <linearGradient id="gold2" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#C9A55A"/>
-      <stop offset="100%" style="stop-color:#E8C87A"/>
+      <stop offset="50%" style="stop-color:#E8C87A"/>
+      <stop offset="100%" style="stop-color:#C9A55A"/>
     </linearGradient>
+    <radialGradient id="glow2a" cx="30%" cy="35%">
+      <stop offset="0%" style="stop-color:#C9A55A;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#C9A55A;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="glow2b" cx="70%" cy="65%">
+      <stop offset="0%" style="stop-color:#E8C87A;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#E8C87A;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
   </defs>
   <rect width="600" height="338" fill="url(#bg2)"/>
-  <rect x="0" y="0" width="600" height="2" fill="url(#gold2)" opacity="0.7"/>
-  <!-- Moldura externa -->
-  <rect x="48" y="40" width="504" height="220" rx="4" ry="4" fill="none" stroke="#D6CFC4" stroke-width="1"/>
-  <!-- Moldura interna -->
-  <rect x="64" y="56" width="472" height="188" rx="2" ry="2" fill="none" stroke="#E4DFD8" stroke-width="0.75"/>
-  <!-- Quadrante abstrato — composição fotográfica -->
-  <rect x="80" y="72" width="140" height="105" rx="2" fill="white" opacity="0.6"/>
-  <rect x="232" y="72" width="105" height="105" rx="2" fill="white" opacity="0.45"/>
-  <rect x="350" y="72" width="170" height="105" rx="2" fill="white" opacity="0.6"/>
-  <rect x="80" y="189" width="210" height="43" rx="2" fill="white" opacity="0.4"/>
-  <rect x="302" y="189" width="218" height="43" rx="2" fill="white" opacity="0.4"/>
-  <!-- Detalhe dourado diagonal -->
-  <line x1="48" y1="40" x2="68" y2="60" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
-  <line x1="552" y1="40" x2="532" y2="60" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
-  <line x1="48" y1="260" x2="68" y2="240" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
-  <line x1="552" y1="260" x2="532" y2="240" stroke="#C9A55A" stroke-width="1" opacity="0.5"/>
-  <!-- Texto -->
-  <text x="300" y="291" font-family="Georgia, serif" font-size="14.5" font-weight="400" fill="#1A1A1A" letter-spacing="3.5" text-anchor="middle" opacity="0.85">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
-  <text x="300" y="311" font-family="'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="300" fill="#999" letter-spacing="2.5" text-anchor="middle">Registros do seu evento</text>
-  <line x1="265" y1="322" x2="335" y2="322" stroke="#C9A55A" stroke-width="0.8" opacity="0.5"/>
+  <ellipse cx="180" cy="120" rx="150" ry="100" fill="url(#glow2a)"/>
+  <ellipse cx="420" cy="220" rx="130" ry="90" fill="url(#glow2b)"/>
+  <!-- Equipment silhouette -->
+  <g filter="url(#shadow2)" opacity="0.9">
+    <!-- Câmera principal -->
+    <rect x="220" y="125" width="160" height="100" rx="6" fill="#1A1A28" stroke="#2A2A40" stroke-width="1.5"/>
+    <circle cx="300" cy="175" r="38" fill="#0D0D18" stroke="#C9A55A" stroke-width="2"/>
+    <circle cx="300" cy="175" r="28" fill="#1A1A28" stroke="#C9A55A" stroke-width="1"/>
+    <circle cx="300" cy="175" r="12" fill="#C9A55A" opacity="0.3"/>
+    <!-- Visor -->
+    <rect x="270" y="110" width="60" height="20" rx="4" fill="#0A0A14" stroke="#C9A55A" stroke-width="1"/>
+    <!-- Microfone decorativo -->
+    <circle cx="355" cy="90" r="14" fill="#1A1A28" stroke="#C9A55A" stroke-width="1.5"/>
+    <rect x="352" y="55" width="6" height="35" fill="#2A2A40"/>
+    <circle cx="355" cy="52" r="6" fill="#C9A55A" opacity="0.6"/>
+    <line x1="345" y1="95" x2="345" y2="100" stroke="#C9A55A" stroke-width="1.5" opacity="0.5"/>
+    <line x1="355" y1="98" x2="355" y2="104" stroke="#C9A55A" stroke-width="1.5" opacity="0.5"/>
+    <line x1="365" y1="95" x2="365" y2="100" stroke="#C9A55A" stroke-width="1.5" opacity="0.5"/>
+    <!-- Spotlight icon -->
+    <g transform="translate(240,235)">
+      <circle cx="0" cy="0" r="12" fill="none" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="-8" y1="-8" x2="-12" y2="-12" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="8" y1="-8" x2="12" y2="-12" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="8" y1="8" x2="12" y2="12" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="-8" y1="8" x2="-12" y2="12" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+    </g>
+    <!-- Calendar icon (evento) -->
+    <g transform="translate(355,235)">
+      <rect x="-10" y="-8" width="20" height="18" rx="2" fill="none" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="-10" y1="-3" x2="10" y2="-3" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="-6" y1="-12" x2="-6" y2="-8" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+      <line x1="6" y1="-12" x2="6" y2="-8" stroke="#C9A55A" stroke-width="1.5" opacity="0.4"/>
+    </g>
+  </g>
+  <!-- Branding -->
+  <text x="300" y="290" font-family="Georgia, serif" font-size="26" font-weight="300" fill="#F5F5F5" text-anchor="middle" letter-spacing="4">LIPE<tspan fill="#C9A55A">.VISION</tspan></text>
+  <text x="300" y="312" font-family="'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="300" fill="rgba(245,245,245,0.5)" text-anchor="middle" letter-spacing="3">REGISTROS DO SEU EVENTO</text>
+  <!-- Linha decorativa -->
+  <line x1="225" y1="323" x2="375" y2="323" stroke="#C9A55A" stroke-width="0.8" opacity="0.4"/>
 </svg>`)}`;
   }
 
-  // galeria-03 — capa escura com gradiente Telegram/neon
+  // galeria-03 — capa escura com gradiente Telegram/neon (mantida)
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" width="600" height="338">
   <defs>
     <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1850,3 +1998,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroParallax();
   initSmoothScroll();
 });
+
+
+/* ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────── */
+// Garante que o carrossel seja inicializado quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeroCarousel);
+} else {
+  initHeroCarousel();
+}
