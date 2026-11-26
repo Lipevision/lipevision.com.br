@@ -1,25 +1,39 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Banco de dados
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Arquivos sensíveis
+.env
+.env.local
+*.pem
+*.key
+
+# PDFs gerados
+data/pdfs/
+
+# Logs
+*.log
+logs/
+
 # Sistema operacional
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Arquivos temporários e de editor
-*.tmp
-*.log
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# Arquivos HEIC (não suportados pelo navegador, não referenciados no código)
-assets/images/IMG_2929.HEIC
-assets/images/IMG_2947.HEIC
-assets/images/IMG_2976.HEIC
-assets/images/IMG_2980.HEIC
-assets/images/IMG_2982.HEIC
-assets/images/IMG_3063.HEIC
-assets/images/IMG_3976.HEIC
-assets/images/IMG_4008.HEIC
-assets/images/IMG_4020.HEIC
-
-# Variáveis de ambiente (nunca enviar)
-.env
-.env.local
+# Temporários
+tmp/
+temp/
