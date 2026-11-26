@@ -693,44 +693,55 @@ async function gerarPDF(dados) {
   const col1 = mL;
   const col2 = mL + larguraColuna + 10;
   
-  // LIPE.VISION (Contratada)
+  // LIPE.VISION (Contratada) - LADO ESQUERDO
+  
+  // Assinatura cursiva ACIMA da linha
+  doc.setFont('times', 'italic');  // Fonte cursiva elegante
+  doc.setFontSize(18);
+  doc.setTextColor(...COR_BLACK);
+  doc.text(dados.contratadaNome, col1, y + 18);
+  
+  // Linha de assinatura
   doc.setDrawColor(...COR_LT);
   doc.setLineWidth(0.3);
   doc.line(col1, y + 24, col1 + larguraColuna, y + 24);
   
-  doc.setFont('HelloScript', 'normal');  // Fonte cursiva
-  doc.setFontSize(14);
-  doc.setTextColor(...COR_BLACK);
-  doc.text(dados.contratadaNome, col1, y + 20);
-  
+  // Nome completo ABAIXO da linha
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...COR_BLACK);
   doc.text(dados.contratadaNomeCompleto, col1, y + 29);
   
+  // Identificação
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(...COR_LT);
   doc.text('LIPE.VISION', col1, y + 34);
   doc.text('Fotografia Profissional', col1, y + 38.5);
   
-  // Cliente (Contratante) — Assinatura cursiva gerada
-  doc.setDrawColor(...COR_LT);
-  doc.line(col2, y + 24, col2 + larguraColuna, y + 24);
+  // CLIENTE (Contratante) - LADO DIREITO
   
-  doc.setFont('HelloScript', 'normal');  // Fonte cursiva
-  doc.setFontSize(14);
+  // Assinatura cursiva ACIMA da linha (gerada automaticamente)
+  doc.setFont('times', 'italic');  // Fonte cursiva elegante
+  doc.setFontSize(18);
   doc.setTextColor(...COR_BLACK);
   const assinaturaTexto = dados.assinaturaNome.length > 28 ? 
     dados.assinaturaNome.slice(0, 26) + '…' : 
     dados.assinaturaNome;
-  doc.text(assinaturaTexto, col2, y + 20);
+  doc.text(assinaturaTexto, col2, y + 18);
   
+  // Linha de assinatura
+  doc.setDrawColor(...COR_LT);
+  doc.setLineWidth(0.3);
+  doc.line(col2, y + 24, col2 + larguraColuna, y + 24);
+  
+  // Nome completo ABAIXO da linha
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...COR_BLACK);
   doc.text(dados.assinaturaNome, col2, y + 29);
   
+  // Identificação
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(...COR_LT);
