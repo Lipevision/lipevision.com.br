@@ -770,11 +770,16 @@ async function gerarPDF(dados) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// ENVIAR CONTRATO PARA O SERVIDOR
+// ENVIAR CONTRATO PARA SUPABASE
 // ══════════════════════════════════════════════════════════════════════════
 
 async function enviarContrato(dados, pdfBlob) {
   try {
+    // Verificar se o Supabase está disponível
+    if (!window.lipvisionDB || !window.lipvisionDB.supabase) {
+      throw new Error('Sistema não configurado. Configure o Supabase em supabase-config.js');
+    }
+    
     // Converter PDF para Base64
     const pdfBase64 = await new Promise((resolve) => {
       const reader = new FileReader();
@@ -782,7 +787,7 @@ async function enviarContrato(dados, pdfBlob) {
       reader.readAsDataURL(pdfBlob);
     });
     
-    // Preparar payload
+    // Preparar dados para o Supabase
     const payload = {
       nome: dados.nome,
       cpf: dados.cpf,
@@ -791,29 +796,26 @@ async function enviarContrato(dados, pdfBlob) {
       tipoServico: dados.tipoServico,
       dataEvento: dados.dataEvento,
       horarioInicio: dados.horarioInicio,
-      horarioFim: dados.horarioFim !== '—' ? dados.horarioFim : '',
+      horarioFim: dados.horarioFim !== '—' ? dados.horarioFim : null,
       localEvento: dados.localEvento,
       valorTotal: dados.valorTotal,
-      valorTransporte: dados.valorTransporte,
+      valorTransporte: dados.valorTransporte || null,
       descricaoPacote: dados.descricaoPacote,
       formaPagamento: dados.formaPagamento,
       autorizacaoImagem: dados.autorizacaoImagem,
-      observacoes: dados.observacoes || '',
+      observacoes: dados.observacoes || null,
       assinaturaNome: dados.assinaturaNome,
       aceiteConfirmado: dados.aceiteConfirmado,
-      pdfBase64: pdfBase64
+      pdfBase64: pdfBase64,
+      dataAssinatura: dados.dataAssinatura,
+      horaAssinatura: dados.horaAssinatura
     };
     
-    const response = await fetch('/api/contratos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    
-    const result = await response.json();
+    // Salvar no Supabase usando o cliente
+    const result = await window.lipvisionDB.criarContrato(payload);
     
     if (!result.success) {
-      throw new Error(result.message || 'Erro ao enviar contrato');
+      throw new Error('Erro ao salvar contrato');
     }
     
     return result;
